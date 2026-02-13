@@ -2,6 +2,7 @@ package com.tienda.service;
 
 import com.tienda.domain.Producto;
 import com.tienda.repository.ProductoRepository;
+import com.tienda.repository.CategoriaRepository;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -14,20 +15,23 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProductoService {
 
     private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
     private final FirebaseStorageService firebaseStorageService;
 
     public ProductoService(ProductoRepository productoRepository,
+            CategoriaRepository categoriaRepository,
             FirebaseStorageService firebaseStorageService) {
         this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
         this.firebaseStorageService = firebaseStorageService;
     }
 
     @Transactional(readOnly = true)
     public List<Producto> getProductos(boolean activo) {
         if (activo) {
-            return productoRepository.findByActivoTrue();
+            return productoRepository.findByActivoTrue(); // join fetch + filtro activo
         }
-        return productoRepository.findAll();
+        return productoRepository.findAllWithCategoria(); // join fetch sin filtro
     }
 
     @Transactional(readOnly = true)
@@ -37,6 +41,17 @@ public class ProductoService {
 
     @Transactional
     public void save(Producto producto, MultipartFile imagenFile) {
+
+        // Validar y cargar categoria real desde DB usando el id recibido del form
+        if (producto.getCategoria() == null || producto.getCategoria().getIdCategoria() == null) {
+            throw new IllegalArgumentException("Debe seleccionar una categoría.");
+        }
+
+        /*var cat = categoriaRepository.findById(producto.getCategoria().getIdCategoria())
+                .orElseThrow(() -> new IllegalArgumentException("Categoría inválida."));
+
+        producto.setCategoria(cat);
+*/
         producto = productoRepository.save(producto);
 
         if (imagenFile != null && !imagenFile.isEmpty()) {
@@ -49,7 +64,7 @@ public class ProductoService {
                 producto.setRutaImagen(rutaImagen);
                 productoRepository.save(producto);
             } catch (IOException e) {
-                // Puedes loggear el error si tienes logger
+                // Si quieres, loggea o lanza runtime
                 // throw new RuntimeException("Error subiendo imagen del producto", e);
             }
         }

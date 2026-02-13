@@ -4,9 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "producto")
 public class Producto implements Serializable {
@@ -17,7 +21,6 @@ public class Producto implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_producto")
     private Integer idProducto;
-    private Integer idCategoria;
 
     @Column(unique = true, nullable = false, length = 50)
     @NotNull
@@ -39,5 +42,12 @@ public class Producto implements Serializable {
     @Column(length = 1024)
     @Size(max = 1024)
     private String rutaImagen;
+
     private boolean activo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_categoria")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Categoria categoria;
 }
