@@ -80,11 +80,20 @@
                         </div>
 
                         <!-- Botón carrito -->
-                        <a class="btn btn-primary btn-sm"
-                           th:href="@{/carrito/agregar/{id}(id=${p.idProducto})}"
-                           title="Agregar al carrito">
-                            🛒
-                        </a>
+                        <form action="/carrito/agregar" method="post" class="d-inline">
+
+                            <input type="hidden"
+                                   name="idProducto"
+                                   th:value="${p.idProducto}" />
+
+                            <button type="submit"
+                                    class="btn btn-sm btn-primary"
+                                    th:disabled="${p.existencias < 1}"
+                                    onclick="addCart(this.form)">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </button>
+
+                        </form>
 
                     </div>
                 </div>
