@@ -3,6 +3,7 @@ package com.tienda.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -26,4 +27,7 @@ public class Categoria implements Serializable {
     @Size(max = 1024)
     private String rutaImagen;
     private boolean activo;
+    
+    @OneToMany(mappedBy="categoria")
+    private List<Producto> productos;
 }

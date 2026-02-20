@@ -1,48 +1,51 @@
+/* ===== Base ===== */
 body {
-    background-color: bisque;
+    background-color: #f8f9fa;  /* neutro (bootstrap-like) */
     font-family: serif;
+    margin: 0;
+    padding: 0;
 }
 
+/* ===== Header (ya NO fijo) ===== */
 header {
-    position: fixed;
-    background-color: #6666FF;
+    position: sticky;      /* se queda arriba al hacer scroll */
     top: 0;
-    left: 0;
+    z-index: 1030;         /* por encima del contenido */
+    background-color: #6666FF;
     width: 100%;
-    height: 90px;
     padding: 10px;
 }
 
+/* ===== Layout general (sin fixed) ===== */
+main {
+    padding: 20px;
+}
+
+/* Si usas aside/section en tu plantilla, que NO sean fixed */
 aside {
-    position: fixed;  
-    background-color: #99FF99;
-    top: 110px;
-    left: 0;
-    width: 20%;
-    bottom: 20px;
+    position: static;
+    background-color: transparent;
     padding: 10px;
 }
+
 section {
-    position: fixed;  
-    background-color: #dd8295;
-    top: 110px;
-    left: 20%;
-    width: 80%;
-    bottom: 20px;
+    position: static;
+    background-color: transparent;
     padding: 10px;
-    overflow-y: scroll;
+    overflow: visible;
 }
+
+/* ===== Footer ===== */
 footer {
-    position: fixed;  
     background-color: black;
-    color: white;    
-    left: 0;
+    color: white;
     width: 100%;
     height: 20px;
-    bottom: 0;
     text-align: center;
+    line-height: 20px;
 }
 
+/* ===== Nav (tu estilo) ===== */
 nav {
    display: flex;
    justify-content: space-between;
@@ -53,7 +56,7 @@ nav {
     font-size: 30px;
     font-weight: bold;
     font-family: cursive;
-    line-height: 90px;
+    line-height: 60px;
 }
 
 .nav-link {
@@ -70,11 +73,11 @@ nav {
 .nav-menu-item {
     font-size: 22px;
     margin: 0 10px;
-    line-height: 90px;
+    line-height: 60px;
 }
 
 .menu-item {
-    padding: 5px;
+    padding: 5px 10px;
     background-color: green;
     border-radius: 10px;
 }
@@ -83,6 +86,81 @@ nav {
     background-color: black;
 }
 
+/* =========================
+   PRODUCT CARDS STYLING
+========================= */
+.card {
+    border-radius: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
 
+.card-img-top {
+    height: 180px;
+    object-fit: cover;
+}
 
+/* 1 línea con ... para el detalle */
+.product-desc {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block;
+    max-width: 100%;
+    min-height: 22px;
+}
+
+.price-green {
+    color: #198754;
+    font-weight: 700;
+}
+
+.btn-sm {
+    font-size: 14px;
+    padding: 4px 8px;
+}
+
+.badge {
+    font-size: 12px;
+}
+/* ===== Fix: colores neutros + tabs visibles ===== */
+
+/* Header neutro */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    width: 100%;
+    padding: 10px;
+}
+
+/* Links del header en oscuro (neutro) */
+header .nav-link {
+    color: #212529;
+    text-decoration: none;
+}
+
+/* Tabs/categorías visibles */
+.nav.nav-underline .nav-link {
+    color: #212529 !important;
+}
+
+.nav.nav-underline .nav-link.active {
+    color: #0d6efd !important;
+    font-weight: 700;
+}
+
+/* Opcional: mejor espaciado de tabs */
+.nav.nav-underline {
+    gap: 12px;
+}
+
+.nav.nav-underline .nav-link {
+    padding: 6px 2px;
+}
