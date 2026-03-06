@@ -30,6 +30,7 @@
     </div>
 </section>
 
+
 <!-- fragmento 2 para mostrar los productos en "tarjetas" -->
 <section th:fragment="tarjetas" class="container">
     <div class="row g-4">
@@ -60,7 +61,7 @@
                         th:text="${p.descripcion}">
                     </h6>
 
-                    <!-- Detalle (1 línea, controlado por CSS con .product-desc) -->
+                    <!-- Detalle -->
                     <p class="product-desc text-muted mb-3"
                        th:if="${p.detalle != null and !#strings.isEmpty(p.detalle)}"
                        th:text="${p.detalle}">
@@ -104,39 +105,109 @@
 </section>
 
 
-<!-- Fragmento 3 fragmento que presenta las 3 consultas y la tarea #2 -->
-<section th:fragment="consultas" class="row row-cols-4 -p2">
+<!-- Fragmento 3: tarjetas de consultas -->
+<section th:fragment="consultas" class="row row-cols-4 p-2">
+
     <div th:replace="~{consultas/fragmentos :: formConsulta('primary',#{consultas.derivadas},'/consultas/consultaDerivada')}"></div>
+
     <div th:replace="~{consultas/fragmentos :: formConsulta('warning',#{consultas.jpql},'/consultas/consultaJPQL')}"></div>
+
     <div th:replace="~{consultas/fragmentos :: formConsulta('success',#{consultas.sql},'/consultas/consultaSQL')}"></div>
-    <div class='card bg-danger p-2 text-center text-white'> 
-        <h4>Aca va su practica #2</h4>
-    </div>
+
+    <div th:replace="~{consultas/fragmentos :: formConsultaExistencias('danger','Consulta por Existencias','/consultas/consultaExistencias')}"></div>
+
 </section>
 
-<!-- Fragmento 4 fragmento del formulario con parametros -->
+
+<!-- Fragmento 4: formulario para consultas por precio -->
 <div th:fragment="formConsulta(colorForm, textoForm, accionForm)">
     <form method="post" class="was-validated" th:action="@{${accionForm}}">
         <div class="card p-2">
-            <div class="card-header text-center text-white" th:classappend="${'bg-'+colorForm}"> 
+            <div class="card-header text-center text-white"
+                 th:classappend="${'bg-' + colorForm}">
                 <h4>[[${textoForm}]]</h4>
             </div>
+
             <div class="card-body">
-                <div class='mb-3'>
-                    <label> [[#{consultas.precio.inferior}]] </label>
-                    <input type='number' name='precioInf' th:value='${precioInf}' class='form-control' min='0' required/>
+
+                <div class="mb-3">
+                    <label>[[#{consultas.precio.inferior}]]</label>
+                    <input type="number"
+                           name="precioInf"
+                           th:value="${precioInf}"
+                           class="form-control"
+                           min="0"
+                           required/>
                 </div>
-                <div class='mb-3'>
-                    <label> [[#{consultas.precio.superior}]] </label>
-                    <input type='number' name='precioSup' th:value='${precioSup}' class='form-control' min='0' required/>
+
+                <div class="mb-3">
+                    <label>[[#{consultas.precio.superior}]]</label>
+                    <input type="number"
+                           name="precioSup"
+                           th:value="${precioSup}"
+                           class="form-control"
+                           min="0"
+                           required/>
                 </div>
+
             </div>
-            <div class="card-footer"> 
-                <button type="submit" class="btn text-white" th:classappend="${'btn-'+colorForm}">
-                    <i class='fa-solid fa-magnifying-glass'> </i> [[${textoForm}]]
+
+            <div class="card-footer">
+                <button type="submit"
+                        class="btn text-white"
+                        th:classappend="${'btn-' + colorForm}">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    [[${textoForm}]]
                 </button>
             </div>
         </div>
+    </form>
+</div>
 
+
+<!-- Fragmento 5: formulario para consultas por existencias -->
+<div th:fragment="formConsultaExistencias(colorForm, textoForm, accionForm)">
+    <form method="post" class="was-validated" th:action="@{${accionForm}}">
+        <div class="card p-2">
+
+            <div class="card-header text-center text-white"
+                 th:classappend="${'bg-' + colorForm}">
+                <h4>[[${textoForm}]]</h4>
+            </div>
+
+            <div class="card-body">
+
+                <div class="mb-3">
+                    <label>Existencias mínimas</label>
+                    <input type="number"
+                           name="existenciasInf"
+                           th:value="${existenciasInf}"
+                           class="form-control"
+                           min="0"
+                           required/>
+                </div>
+
+                <div class="mb-3">
+                    <label>Existencias máximas</label>
+                    <input type="number"
+                           name="existenciasSup"
+                           th:value="${existenciasSup}"
+                           class="form-control"
+                           min="0"
+                           required/>
+                </div>
+
+            </div>
+
+            <div class="card-footer">
+                <button type="submit"
+                        class="btn text-white"
+                        th:classappend="${'btn-' + colorForm}">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    [[${textoForm}]]
+                </button>
+            </div>
+
+        </div>
     </form>
 </div>

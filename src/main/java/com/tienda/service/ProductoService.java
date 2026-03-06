@@ -90,4 +90,9 @@ public class ProductoService {
     public List<Producto> consultaSQL(double precioInf, double precioSup) {
         return productoRepository.findByPrecioBetween(precioInf, precioSup);
     }
+
+    @Transactional(readOnly = true)
+    public List<Producto> consultaExistencias(int existenciasInf, int existenciasSup) {
+        return productoRepository.findByExistenciasBetween(existenciasInf, existenciasSup);
+    }
 }
