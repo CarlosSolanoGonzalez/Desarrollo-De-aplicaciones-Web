@@ -14,4 +14,6 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
 
     @Query("select p from Producto p join fetch p.categoria")
     List<Producto> findAllWithCategoria();
+    
+    List<Producto> findByPrecioBetween(double precioInf, double precioSup);
 }

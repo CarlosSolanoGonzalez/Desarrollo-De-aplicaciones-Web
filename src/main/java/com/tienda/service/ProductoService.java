@@ -47,11 +47,6 @@ public class ProductoService {
             throw new IllegalArgumentException("Debe seleccionar una categoría.");
         }
 
-        /*var cat = categoriaRepository.findById(producto.getCategoria().getIdCategoria())
-                .orElseThrow(() -> new IllegalArgumentException("Categoría inválida."));
-
-        producto.setCategoria(cat);
-*/
         producto = productoRepository.save(producto);
 
         if (imagenFile != null && !imagenFile.isEmpty()) {
@@ -64,8 +59,6 @@ public class ProductoService {
                 producto.setRutaImagen(rutaImagen);
                 productoRepository.save(producto);
             } catch (IOException e) {
-                // Si quieres, loggea o lanza runtime
-                // throw new RuntimeException("Error subiendo imagen del producto", e);
             }
         }
     }
@@ -81,5 +74,20 @@ public class ProductoService {
         } catch (DataIntegrityViolationException e) {
             throw new IllegalStateException("No se puede eliminar el producto. Tiene datos asociados.", e);
         }
+    }
+
+    @Transactional
+    public List<Producto> consultaDerivada(double precioInf, double precioSup) {
+        return productoRepository.findByPrecioBetween(precioInf, precioSup);
+    }
+
+    @Transactional
+    public List<Producto> consultaJPQL(double precioInf, double precioSup) {
+        return productoRepository.findByPrecioBetween(precioInf, precioSup);
+    }
+
+    @Transactional
+    public List<Producto> consultaSQL(double precioInf, double precioSup) {
+        return productoRepository.findByPrecioBetween(precioInf, precioSup);
     }
 }

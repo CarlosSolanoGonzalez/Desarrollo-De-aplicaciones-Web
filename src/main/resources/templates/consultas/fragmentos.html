@@ -102,3 +102,41 @@
 
     </div>
 </section>
+
+
+<!-- Fragmento 3 fragmento que presenta las 3 consultas y la tarea #2 -->
+<section th:fragment="consultas" class="row row-cols-4 -p2">
+    <div th:replace="~{consultas/fragmentos :: formConsulta('primary',#{consultas.derivadas},'/consultas/consultaDerivada')}"></div>
+    <div th:replace="~{consultas/fragmentos :: formConsulta('warning',#{consultas.jpql},'/consultas/consultaJPQL')}"></div>
+    <div th:replace="~{consultas/fragmentos :: formConsulta('success',#{consultas.sql},'/consultas/consultaSQL')}"></div>
+    <div class='card bg-danger p-2 text-center text-white'> 
+        <h4>Aca va su practica #2</h4>
+    </div>
+</section>
+
+<!-- Fragmento 4 fragmento del formulario con parametros -->
+<div th:fragment="formConsulta(colorForm, textoForm, accionForm)">
+    <form method="post" class="was-validated" th:action="@{${accionForm}}">
+        <div class="card p-2">
+            <div class="card-header text-center text-white" th:classappend="${'bg-'+colorForm}"> 
+                <h4>[[${textoForm}]]</h4>
+            </div>
+            <div class="card-body">
+                <div class='mb-3'>
+                    <label> [[#{consultas.precio.inferior}]] </label>
+                    <input type='number' name='precioInf' th:value='${precioInf}' class='form-control' min='0' required/>
+                </div>
+                <div class='mb-3'>
+                    <label> [[#{consultas.precio.superior}]] </label>
+                    <input type='number' name='precioSup' th:value='${precioSup}' class='form-control' min='0' required/>
+                </div>
+            </div>
+            <div class="card-footer"> 
+                <button type="submit" class="btn text-white" th:classappend="${'btn-'+colorForm}">
+                    <i class='fa-solid fa-magnifying-glass'> </i> [[${textoForm}]]
+                </button>
+            </div>
+        </div>
+
+    </form>
+</div>
