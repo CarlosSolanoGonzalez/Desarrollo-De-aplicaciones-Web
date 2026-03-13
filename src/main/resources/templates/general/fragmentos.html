@@ -26,10 +26,14 @@
             </button>
             <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                 <ul class="navbar-nav">
-                    <li class="nav-item px-2"><a class="nav-link" th:href="@{/categoria/listado}">[[#{plantilla.categorias}]]</a></li>
-                    <li class="nav-item px-2"><a class="nav-link" th:href="@{/producto/listado}">[[#{plantilla.productos}]]</a></li>
+                    <li class="nav-item px-2" sec:authorize="hasAnyRole('ADMIN','VENDEDOR')">
+                        <a class="nav-link" th:href="@{/categoria/listado}">[[#{plantilla.categorias}]]</a>
+                    </li>
+                    <li class="nav-item px-2" sec:authorize="hasAnyRole('ADMIN','VENDEDOR')">
+                        <a class="nav-link" th:href="@{/producto/listado}">[[#{plantilla.productos}]]</a>
+                    </li>
                     <li class="nav-item px-2"><a class="nav-link" th:href="@{/consultas/listado}">[[#{plantilla.consultas}]]</a></li>                                
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
                             [[#{plantilla.admin}]]</a>
                         <ul class="dropdown-menu">
@@ -62,7 +66,33 @@
                     </li>
                 </ul>
                 <div id="resultBlock">
-                </div>         
+                </div>      
+
+                <ul class="navbar-nav" sec:authorize="isAuthenticated()">
+                    <li class="nav-item my-auto">
+                        <a class="nav-link">
+                            <i class="fa-regular fa-user"></i>
+                            <span class="ms-1" sec:authentication="name"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item my-auto">
+                        <form method="post" th:action="@{/logout}" class="mb-0">
+                            <button class="btn nav-link" type="submit">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span class="ms-1">Logout</span>
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav" sec:authorize="!isAuthenticated()">
+                    <li class="nav-item my-auto">
+                        <a class="nav-link" th:href="@{/login}">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span class="ms-1">Login</span>
+                        </a>
+                    </li>
+                </ul>
 
             </div>
         </div>
