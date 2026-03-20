@@ -71,7 +71,9 @@
                 <ul class="navbar-nav" sec:authorize="isAuthenticated()">
                     <li class="nav-item my-auto">
                         <a class="nav-link">
-                            <i class="fa-regular fa-user"></i>
+                            <img th:if="${session.imagenUsuario != null and !#strings.isEmpty(session.imagenUsuario)}"
+                                 th:src="@{${session.imagenUsuario}}" height="40"
+                                 alt="..." class="rounded-circle"/>
                             <span class="ms-1" sec:authentication="name"></span>
                         </a>
                     </li>
