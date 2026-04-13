@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"/>
+    <body>
+
+<!-- fragmento 1 para Agregar ruta en ventana modal -->
+<section th:fragment="agregar">
+    <!-- Button trigger modal -->
+    <div class='row py-4 mb-2 bg-light'>
+        <div class='col-md-1'></div>
+        <div class='col-md-3'>
+            <button type="button" class="btn btn-primary"
+                    sec:authorize="hasRole('ROLE_ADMIN')"
+                    data-bs-toggle="modal" data-bs-target="#agregarRutaModal">
+                <i class="fa-solid fa-plus"></i> [[#{ruta.agregar}]]</button>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="agregarRutaModal"  tabindex="-1"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                        <i class="fa-solid fa-route"></i> [[#{ruta.agregar}]]</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action='@{/ruta/guardar}' th:object='${ruta}'
+                      class='was-validated' method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label>[[#{ruta.patron}]]</label>
+                            <input type="text" class="form-control"
+                                   name="ruta" required="true"/>
+                        </div>
+                        <div class="mb-3">
+                            <label>[[#{ruta.requiereRol}]]</label>
+                            <select class="form-select" name="requiereRol">
+                                <option value="true">[[#{texto.si}]]</option>
+                                <option value="false">[[#{texto.no}]]</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>[[#{ruta.rolName}]]</label>
+                            <select class="form-select" name="rol.idRol">
+                                <option value="">-- [[#{ruta.rolName}]] --</option>
+                                <option th:each="r : ${roles}" th:value="${r.idRol}" th:text="${r.rol}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-floppy-disk"></i> [[#{accion.guardar}]]</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- fragmento 2 para el listado de rutas que requieren rol -->
+<section th:fragment="listadoConRol" class="p-3">
+    <div class="row p-3">
+        <div class="col-md-9">
+            <div class="card p-2">
+                <div class="card-header"><h4>[[#{ruta.listado}]]</h4></div>
+                <div class="card-body">
+                    <div th:if="${rutasConRol != null and !rutasConRol.empty}">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>[[#{ruta.patron}]]</th>
+                                    <th>[[#{ruta.rolName}]]</th>
+                                    <th sec:authorize="hasRole('ROLE_ADMIN')"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="rt : ${rutasConRol}">
+                                    <td>[[${rt.idRuta}]]</td>
+                                    <td>[[${rt.ruta}]]</td>
+                                    <td>[[${rt.rol != null ? rt.rol.rol : ''}]]</td>
+                                    <td sec:authorize="hasRole('ROLE_ADMIN')">
+                                        <div class="d-flex align-items-start">
+                                            <button type="button" class="btn btn-danger"
+                                                    data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                    th:data-bs-id="${rt.idRuta}"
+                                                    th:data-bs-descripcion="${rt.ruta}">
+                                                <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
+                                            </button>
+                                            <a th:href="@{/ruta/modificar/{id}(id=${rt.idRuta})}"
+                                               class="btn btn-warning">
+                                                <i class="fa-solid fa-pencil"></i> [[#{accion.actualizar}]]
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table></div>
+                    <div class="text-center p-2" th:if="${rutasConRol == null or rutasConRol.empty}">
+                        <span>[[#{lista.vacia}]]</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-success text-white mb-3">
+                <div class="card-body"><h3>[[#{ruta.total}]]</h3>
+                    <h4 class="fs-2"><i class="fas fa-route"></i> [[${totalRutas}]]</h4>
+                </div></div>
+        </div>
+    </div>
+</section>
+
+<!-- fragmento 3 para el listado de rutas abiertas (sin rol) -->
+<section th:fragment="listadoSinRol" class="p-3">
+    <div class="row p-3">
+        <div class="col-md-9">
+            <div class="card p-2">
+                <div class="card-header"><h4>[[#{ruta.listado.permit}]]</h4></div>
+                <div class="card-body">
+                    <div th:if="${rutasSinRol != null and !rutasSinRol.empty}">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>[[#{ruta.patron}]]</th>
+                                    <th sec:authorize="hasRole('ROLE_ADMIN')"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="rt : ${rutasSinRol}">
+                                    <td>[[${rt.idRuta}]]</td>
+                                    <td>[[${rt.ruta}]]</td>
+                                    <td sec:authorize="hasRole('ROLE_ADMIN')">
+                                        <div class="d-flex align-items-start">
+                                            <button type="button" class="btn btn-danger"
+                                                    data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                    th:data-bs-id="${rt.idRuta}"
+                                                    th:data-bs-descripcion="${rt.ruta}">
+                                                <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
+                                            </button>
+                                            <a th:href="@{/ruta/modificar/{id}(id=${rt.idRuta})}"
+                                               class="btn btn-warning">
+                                                <i class="fa-solid fa-pencil"></i> [[#{accion.actualizar}]]
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table></div>
+                    <div class="text-center p-2" th:if="${rutasSinRol == null or rutasSinRol.empty}">
+                        <span>[[#{lista.vacia}]]</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4 Fragmento que se utiliza en la página modifica.html -->
+<section th:fragment="editar">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <form method="POST" th:action="@{/ruta/guardar}"
+                  th:object="${ruta}" class="was-validated">
+                <input type="hidden" name="idRuta" th:field="*{idRuta}"/>
+                <div class="row py-4 mb-4 bg-light">
+                    <div class="col-md-4 d-grid">
+                        <a th:href="@{/ruta/listado}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]</a>
+                    </div>
+                    <div class="col-md-4 d-grid">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check"></i> [[#{accion.guardar}]]</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header"><h4>[[#{accion.actualizar}]]</h4></div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label>[[#{ruta.patron}]]</label>
+                                    <input type="text" class="form-control" name="ruta" th:field="*{ruta}" required="true"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label>[[#{ruta.requiereRol}]]</label>
+                                    <select class="form-select" th:field="*{requiereRol}">
+                                        <option th:value="true">[[#{texto.si}]]</option>
+                                        <option th:value="false">[[#{texto.no}]]</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label>[[#{ruta.rolName}]]</label>
+                                    <select class="form-select" name="rol.idRol">
+                                        <option value="">-- [[#{ruta.rolName}]] --</option>
+                                        <option th:each="r : ${roles}" th:value="${r.idRol}" th:text="${r.rol}"
+                                                th:selected="${ruta.rol != null and ruta.rol.idRol == r.idRol}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- 5 fragmento que se utiliza para confirmar que se desea eliminar una ruta -->
+<section th:fragment="confirmarEliminar">
+    <div class="modal fade"
+         id="confirmModal"
+         tabindex="-1"
+         aria-labelledby="modalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered custom-modal-animation">
+            <div class="modal-content animate-slide-up">
+                <form th:action="@{/ruta/eliminar}" th:object="${ruta}" method="post">
+                    <input type="hidden" name="idRuta" id="modalId"/>
+                    <div class="modal-header bg-warning text-white">
+                        <h5 class="modal-title" id="modalLabel">
+                            <i class="fa-solid fa-circle-radiation"></i> [[#{accion.confirmar}]]
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>[[#{accion.confirmar.texto1}]] <span id="modalDescripcion"></span>?</p>
+                        <h6>[[#{accion.confirmar.texto2}]]</h6>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+    </body>
+</html>

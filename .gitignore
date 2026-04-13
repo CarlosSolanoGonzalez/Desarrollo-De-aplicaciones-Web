@@ -32,3 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 src/main/resources/firebase/techshop-57f3f-4256b8bb598e.json
+src/main/java/com/tienda/.claude/settings.local.json
